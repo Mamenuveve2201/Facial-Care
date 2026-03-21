@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#2C1F1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Facial Ritual">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>My Facial Care Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FAF6F0;--blush:#F2D8CC;--rose:#D4917A;--deep:#B06B55;--gold:#C9A96E;--dark:#2C1F1A;--mid:#7A5A4F;--lt:#A0816D;--white:#FFFDF9;--teal:#4E9E98;--teal-lt:rgba(78,158,152,.15);--teal-b:rgba(78,158,152,.35)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);min-height:100vh;padding-bottom:90px;background-image:radial-gradient(ellipse at 20% 10%,rgba(212,145,122,.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(201,169,110,.08) 0%,transparent 50%);overscroll-behavior-y:contain}
+/* HEADER */
+.hdr{background:linear-gradient(145deg,#1E1410,#2C1F1A 50%,#4A2E25);padding:48px 24px 22px;text-align:center;position:relative;overflow:hidden;transition:background .5s}
+body.p2 .hdr{background:linear-gradient(145deg,#0D2420,#12332E 50%,#1A4A44)}
+.hdr::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 130%,rgba(201,169,110,.22) 0%,transparent 60%)}
+body.p2 .hdr::before{background:radial-gradient(ellipse at 50% 130%,rgba(78,158,152,.18) 0%,transparent 60%)}
+.hdr-dots{position:absolute;inset:0;opacity:.05;background-image:radial-gradient(circle at 15% 25%,white 1.5px,transparent 1.5px),radial-gradient(circle at 85% 15%,white 1px,transparent 1px),radial-gradient(circle at 60% 70%,white 1px,transparent 1px);background-size:80px 80px,120px 120px,90px 90px}
+.hdr h1{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--cream);letter-spacing:1.5px;position:relative;z-index:1;line-height:1.2}
+.hdr h1 em{color:var(--gold);font-style:italic;font-weight:400}
+body.p2 .hdr h1 em{color:#7DD4CE}
+.hdr-sub{color:rgba(242,216,204,.6);font-size:10px;letter-spacing:3.5px;text-transform:uppercase;margin-top:4px;position:relative;z-index:1}
+.hdr-date{display:inline-block;background:rgba(201,169,110,.18);border:1px solid rgba(201,169,110,.35);color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-top:10px;position:relative;z-index:1}
+body.p2 .hdr-date{background:var(--teal-lt);border-color:var(--teal-b);color:#7DD4CE}
+/* PHASE TOGGLE */
+.ptoggle{display:flex;align-items:center;justify-content:center;gap:0;margin-top:12px;position:relative;z-index:1}
+.ptbtn{padding:7px 18px;border:1.5px solid rgba(201,169,110,.35);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:rgba(242,216,204,.45);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .3s}
+.ptbtn:first-child{border-radius:20px 0 0 20px}
+.ptbtn:last-child{border-radius:0 20px 20px 0;border-left:none}
+.ptbtn.on{background:rgba(201,169,110,.22);color:var(--gold);border-color:rgba(201,169,110,.55)}
+body.p2 .ptbtn.on{background:rgba(78,158,152,.22);color:#7DD4CE;border-color:rgba(78,158,152,.55)}
+/* INSTALL */
+.inst{background:linear-gradient(135deg,rgba(201,169,110,.15),rgba(212,145,122,.1));border-bottom:1px solid rgba(201,169,110,.25);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.inst p{font-size:12px;color:var(--mid);flex:1}.inst strong{color:var(--dark)}
+.inst-btn{background:linear-gradient(135deg,var(--gold),var(--deep));color:white;border:none;border-radius:20px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer}
+.inst-x{background:transparent;border:none;color:var(--lt);font-size:18px;cursor:pointer;padding:2px 6px}
+/* SYNC */
+.sync-bar{display:flex;align-items:center;justify-content:flex-end;padding:3px 16px;gap:5px;font-size:10px;color:var(--lt)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--blush);flex-shrink:0}
+.sdot.ok{background:#6BBF8A}.sdot.err{background:#E08080}.sdot.ing{background:var(--gold);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* NAV */
+.nav{display:flex;background:var(--white);border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(44,31,26,.07);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:52px;padding:11px 3px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:9.5px;font-weight:500;color:var(--lt);cursor:pointer;border-bottom:2.5px solid transparent;text-transform:uppercase;transition:all .2s}
+.tab.on{color:var(--deep);border-bottom-color:var(--deep);background:rgba(212,145,122,.04)}
+body.p2 .tab.on{color:var(--teal);border-bottom-color:var(--teal);background:rgba(78,158,152,.04)}
+.tab i{font-size:16px;display:block;margin-bottom:2px;font-style:normal}
+/* PAGES */
+.pg{display:none;padding:18px 15px}.pg.on{display:block;animation:up .3s ease}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--gold),var(--rose));color:white;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+body.p2 .badge{background:linear-gradient(135deg,#4E9E98,#2D7A74)}
+/* P2 banner */
+.p2-banner{background:var(--teal-lt);border:1px solid var(--teal-b);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:#2D7A74;display:flex;gap:8px;line-height:1.5}
+/* SECTION */
+.sec{display:flex;align-items:center;gap:10px;margin:20px 0 12px}.sec:first-of-type{margin-top:4px}
+.sec h2{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--dark);white-space:nowrap}
+.sec .ln{flex:1;height:1px;background:linear-gradient(to right,var(--blush),transparent)}
+/* PROGRESS */
+.prog-wrap{background:var(--white);border-radius:14px;padding:13px 16px;margin-bottom:14px;border:1px solid rgba(242,216,204,.7)}
+.prog-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--lt);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+.prog-lbl span{color:var(--deep);font-weight:600}
+body.p2 .prog-lbl span{color:var(--teal)}
+.prog-bar{height:5px;background:var(--blush);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--rose),var(--gold));border-radius:3px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+body.p2 .prog-fill{background:linear-gradient(to right,#4E9E98,#7DD4CE)}
+/* ALERT/INFO */
+.alert{background:rgba(212,145,122,.1);border:1px solid rgba(212,145,122,.3);border-radius:12px;padding:11px 14px;margin-bottom:11px;font-size:12px;color:var(--deep);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.info{background:linear-gradient(135deg,rgba(212,145,122,.09),rgba(201,169,110,.05));border:1px solid rgba(212,145,122,.2);border-radius:12px;padding:13px 15px;margin-bottom:13px;font-size:12px;color:var(--mid);line-height:1.6}
+.info strong{color:var(--deep);display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+body.p2 .info{background:linear-gradient(135deg,rgba(78,158,152,.09),rgba(45,122,116,.04));border-color:rgba(78,158,152,.2)}
+body.p2 .info strong{color:var(--teal)}
+/* STEP CARD */
+.card{background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:9px;border:1px solid rgba(242,216,204,.7);display:flex;align-items:flex-start;gap:12px;cursor:pointer;position:relative;overflow:hidden;-webkit-user-select:none;user-select:none;transition:background .2s}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--rose),var(--gold));border-radius:3px 0 0 3px;opacity:0;transition:opacity .2s}
+body.p2 .card::before{background:linear-gradient(to bottom,#4E9E98,#7DD4CE)}
+.card.done{background:rgba(242,216,204,.18)}.card.done::before{opacity:1}
+.card.done .cname{text-decoration:line-through;opacity:.45}.card.done .cnote{opacity:.4}
+.cnum{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--blush),rgba(212,145,122,.25));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--deep);flex-shrink:0;margin-top:2px;transition:all .2s}
+body.p2 .cnum{background:linear-gradient(135deg,rgba(78,158,152,.2),rgba(125,212,206,.12));color:var(--teal)}
+.card.done .cnum{background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-size:13px}
+body.p2 .card.done .cnum{background:linear-gradient(135deg,#4E9E98,#2D7A74)}
+.cbody{flex:1;min-width:0}
+.clbl{font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--lt);margin-bottom:2px}
+.cname{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--dark);line-height:1.3;transition:all .2s}
+.cnote{font-size:11.5px;color:var(--mid);margin-top:4px;line-height:1.55}
+.tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{display:inline-block;background:rgba(201,169,110,.15);color:#8B6914;font-size:9.5px;font-weight:500;letter-spacing:.8px;padding:2px 8px;border-radius:10px}
+.tag.r{background:rgba(212,145,122,.15);color:var(--deep)}.tag.g{background:rgba(100,160,100,.12);color:#4A7C4A}.tag.t{background:var(--teal-lt);color:var(--teal)}
+.chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--blush);background:transparent;flex-shrink:0;margin-top:4px;pointer-events:none;transition:all .2s}
+.card.done .chk{background:linear-gradient(135deg,var(--rose),var(--deep));border-color:transparent}
+body.p2 .card.done .chk{background:linear-gradient(135deg,#4E9E98,#2D7A74)}
+/* RESET */
+.reset{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;background:transparent;border:1px solid var(--blush);border-radius:11px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--lt);cursor:pointer;margin-top:14px;letter-spacing:1px;text-transform:uppercase}
+.reset:active{background:var(--blush);color:var(--dark)}
+/* TREATMENT */
+.day-row{display:flex;gap:5px;margin-bottom:16px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+.day-row::-webkit-scrollbar{display:none}
+.dbtn{flex-shrink:0;padding:7px 13px;border-radius:20px;border:1.5px solid var(--blush);background:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .2s}
+.dbtn.on{background:linear-gradient(135deg,var(--rose),var(--deep));border-color:transparent;color:white;box-shadow:0 4px 12px rgba(176,107,85,.3)}
+body.p2 .dbtn.on{background:linear-gradient(135deg,#4E9E98,#2D7A74);box-shadow:0 4px 12px rgba(78,158,152,.3)}
+.dbtn.today{border-color:var(--gold);color:var(--gold)}.dbtn.today.on{border-color:transparent;color:white}
+.tx-card{background:linear-gradient(145deg,#1E1410,#2C1F1A 60%,#3D2218);border-radius:18px;padding:22px;color:var(--cream);position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(44,31,26,.25);transition:background .5s}
+body.p2 .tx-card{background:linear-gradient(145deg,#0D2420,#12332E 60%,#1A4A44)}
+.tx-card::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(201,169,110,.08)}
+.tx-card::after{content:'';position:absolute;bottom:-40px;left:-30px;width:130px;height:130px;border-radius:50%;background:rgba(212,145,122,.06)}
+body.p2 .tx-card::before{background:rgba(78,158,152,.1)}body.p2 .tx-card::after{background:rgba(125,212,206,.06)}
+.tx-night{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+body.p2 .tx-night{color:#7DD4CE}
+.tx-name{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--cream);line-height:1.25;margin-bottom:7px;position:relative;z-index:1}
+.tx-follow{font-size:12px;color:rgba(242,216,204,.65);margin-bottom:12px;position:relative;z-index:1}
+.tx-follow strong{color:var(--blush)}
+.tx-vibe{display:inline-block;background:rgba(201,169,110,.18);border:1px solid rgba(201,169,110,.28);color:var(--gold);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:5px 13px;border-radius:20px;position:relative;z-index:1}
+body.p2 .tx-vibe{background:rgba(78,158,152,.18);border-color:rgba(78,158,152,.28);color:#7DD4CE}
+/* WED TOGGLE */
+.wtoggle{display:flex;background:var(--white);border-radius:14px;border:1px solid rgba(242,216,204,.7);padding:4px;margin-bottom:16px;gap:4px}
+.wtbtn{flex:1;padding:10px 8px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;background:transparent;color:var(--lt);text-align:center}
+.wtbtn.on{background:linear-gradient(135deg,var(--rose),var(--deep));color:white;box-shadow:0 3px 10px rgba(176,107,85,.25)}
+body.p2 .wtbtn.on{background:linear-gradient(135deg,#4E9E98,#2D7A74);box-shadow:0 3px 10px rgba(78,158,152,.25)}
+.wed-sec{display:none}.wed-sec.vis{display:block}
+/* MASK */
+.mask-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mcrd{background:var(--white);border-radius:12px;padding:14px 12px;border:1.5px solid var(--blush);cursor:pointer;transition:all .2s;text-align:center}
+.mcrd.on{border-color:var(--rose);background:rgba(212,145,122,.06)}
+body.p2 .mcrd.on{border-color:var(--teal);background:var(--teal-lt)}
+.mico{font-size:26px;margin-bottom:7px}.mnm{font-family:'Cormorant Garamond',serif;font-size:13.5px;font-weight:500;color:var(--dark);line-height:1.3}.mbn{font-size:10px;color:var(--lt);margin-top:3px}
+/* DERMAPLANE */
+.dp-card{background:linear-gradient(135deg,#2C1F1A,#4A2E25);border-radius:16px;padding:18px;margin-bottom:12px;color:var(--cream);position:relative;overflow:hidden}
+.dp-card::before{content:'🪒';position:absolute;right:16px;top:16px;font-size:32px;opacity:.2}
+.dp-card h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--gold);margin-bottom:6px}
+.dp-card p{font-size:12px;color:rgba(242,216,204,.7);line-height:1.6;margin-bottom:8px}
+.dp-rules{list-style:none}
+.dp-rules li{font-size:11.5px;color:rgba(242,216,204,.8);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px}
+.dp-rules li:last-child{border-bottom:none}
+/* LOG */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--white);border-radius:14px;padding:14px 16px;border:1px solid rgba(242,216,204,.7);text-align:center}
+.stat-icon{font-size:22px;margin-bottom:6px}.stat-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lt);margin-bottom:4px}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--dark);line-height:1}.stat-sub{font-size:10px;color:var(--lt);margin-top:3px}
+.qlog-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.qlog-btn{background:var(--white);border:1.5px solid var(--blush);border-radius:14px;padding:14px 12px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--dark);cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.qlog-btn:active{border-color:var(--rose);background:rgba(212,145,122,.06)}
+.qico{font-size:24px}.qlbl{font-size:10px;color:var(--lt);letter-spacing:.5px}
+.log-form{background:var(--white);border-radius:16px;border:1.5px solid var(--rose);padding:18px;margin-bottom:16px;animation:up .25s ease}
+.log-form h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark);margin-bottom:14px}
+.form-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lt);margin-bottom:6px;display:block}
+.form-select,.form-textarea{width:100%;background:var(--cream);border:1px solid var(--blush);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);outline:none;appearance:none;-webkit-appearance:none;margin-bottom:12px}
+.form-textarea{min-height:80px;resize:none;line-height:1.5}
+.form-select:focus,.form-textarea:focus{border-color:var(--rose)}
+.form-row{display:flex;gap:8px;margin-top:4px}
+.form-save{flex:1;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;border:none;border-radius:11px;padding:12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.form-cancel{background:transparent;border:1px solid var(--blush);border-radius:11px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--lt);cursor:pointer}
+.je-empty{text-align:center;padding:30px;color:var(--lt);font-size:13px}.je-ico{font-size:36px;margin-bottom:10px}
+.jentry{background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:9px;border:1px solid rgba(242,216,204,.7);position:relative;overflow:hidden}
+.jentry::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.jentry.type-derma::before{background:linear-gradient(to bottom,#C9A96E,#B06B55)}
+.jentry.type-steam::before{background:linear-gradient(to bottom,#7EC8C8,#5A9E9E)}
+.jentry.type-treatment::before{background:linear-gradient(to bottom,var(--rose),var(--deep))}
+.jentry.type-note::before{background:linear-gradient(to bottom,#B8A9C9,#8B7BAA)}
+.jt-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.jt-type{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.type-derma .jt-type{color:#B06B55}.type-steam .jt-type{color:#5A9E9E}.type-treatment .jt-type{color:var(--deep)}.type-note .jt-type{color:#8B7BAA}
+.jt-date{font-size:10px;color:var(--lt)}
+.jt-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--dark);margin-bottom:4px;line-height:1.3}
+.jt-note{font-size:12px;color:var(--mid);line-height:1.55}
+.jt-del{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--blush);font-size:16px;cursor:pointer;padding:2px 6px;border-radius:6px}
+.jt-del:active{color:var(--deep);background:rgba(212,145,122,.1)}
+.jt-ph{display:inline-block;font-size:9px;padding:1px 7px;border-radius:8px;margin-left:6px;font-weight:600;letter-spacing:.5px}
+.jt-ph.ph1{background:rgba(212,145,122,.15);color:var(--deep)}.jt-ph.ph2{background:var(--teal-lt);color:var(--teal)}
+/* PHOTOS */
+.pup-area{background:var(--white);border:2px dashed var(--blush);border-radius:16px;padding:28px;text-align:center;cursor:pointer;margin-bottom:16px;position:relative}
+.pup-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pup-ico{font-size:32px;margin-bottom:8px}.pup-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);margin-bottom:4px}.pup-sub{font-size:11px;color:var(--lt)}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:16px}
+.pt{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:var(--blush)}
+.pt img{width:100%;height:100%;object-fit:cover;display:block}
+.pt-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(44,31,26,.7) 0%,transparent 50%);opacity:0;transition:opacity .2s}
+.pt:active .pt-ov{opacity:1}
+.pt-lbl{position:absolute;bottom:4px;left:4px;right:4px;font-size:8px;color:white;text-align:center;opacity:0}
+.pt:active .pt-lbl{opacity:1}
+/* COMPARE */
+.cmp-ov{position:fixed;inset:0;background:rgba(28,20,16,.95);z-index:500;display:none;flex-direction:column}
+.cmp-ov.vis{display:flex}
+.cmp-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;flex-shrink:0}
+.cmp-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--cream);font-weight:300}
+.cmp-x{background:rgba(255,255,255,.1);border:none;color:var(--cream);font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cmp-body{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0 16px 16px}
+.cmp-tabs{display:flex;gap:6px;margin-bottom:12px;flex-shrink:0}
+.cmp-tab{flex:1;padding:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(242,216,204,.7);cursor:pointer;text-align:center;transition:all .2s}
+.cmp-tab.on{background:rgba(201,169,110,.25);border-color:var(--gold);color:var(--gold)}
+.cmp-imgs{flex:1;display:flex;gap:8px;overflow:hidden}
+.cmp-iw{flex:1;border-radius:12px;overflow:hidden;position:relative;background:rgba(255,255,255,.05)}
+.cmp-iw img{width:100%;height:100%;object-fit:cover;display:block}
+.cmp-il{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(28,20,16,.8));padding:10px 10px 8px;font-size:10px;color:var(--cream);letter-spacing:1px;text-align:center}
+.cmp-single{flex:1;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.05)}
+.cmp-single img{width:100%;height:100%;object-fit:contain}
+.cmp-nav{display:flex;gap:8px;margin-top:10px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.cmp-nav::-webkit-scrollbar{display:none}
+.ct{width:52px;height:52px;border-radius:8px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:all .2s}
+.ct.on{border-color:var(--gold)}.ct img{width:100%;height:100%;object-fit:cover}
+.cpick{background:rgba(201,169,110,.2);border:1px solid rgba(201,169,110,.3);color:var(--gold);border-radius:8px;padding:4px 8px;font-family:'DM Sans',sans-serif;font-size:10px;cursor:pointer;margin-top:4px;display:block;width:52px;text-align:center}
+.cpick.on{background:rgba(201,169,110,.4)}
+/* EXTRAS */
+.xcrd{background:var(--white);border-radius:13px;padding:15px 16px;margin-bottom:9px;border:1px solid rgba(242,216,204,.7)}
+.xtitle{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--dark);margin-bottom:6px}
+.xdesc{font-size:12px;color:var(--mid);line-height:1.6}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pill{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(242,216,204,.5);color:var(--mid)}
+.pill.g{background:rgba(201,169,110,.15);color:#8B6914}
+.sw{background:var(--white);border-radius:14px;overflow:hidden;border:1px solid rgba(242,216,204,.7);margin-bottom:14px}
+.st{width:100%;border-collapse:collapse;font-size:12px}
+.st th{background:linear-gradient(135deg,#2C1F1A,#4A2E25);color:var(--gold);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 10px;text-align:left;font-weight:500}
+body.p2 .st th{background:linear-gradient(135deg,#0D2420,#1A4A44);color:#7DD4CE}
+.st td{padding:9px 10px;border-bottom:1px solid rgba(242,216,204,.5);color:var(--mid);vertical-align:top}
+.st td:first-child{font-weight:600;color:var(--dark);white-space:nowrap;width:36px}
+.st tr:last-child td{border-bottom:none}
+.st tr.tr td{background:rgba(212,145,122,.08)}.st tr.tr td:first-child{color:var(--deep)}
+body.p2 .st tr.tr td{background:rgba(78,158,152,.08)}body.p2 .st tr.tr td:first-child{color:var(--teal)}
+.sh{display:inline-block;background:rgba(201,169,110,.15);color:#8B6914;font-size:9px;font-weight:600;letter-spacing:.8px;padding:1px 6px;border-radius:8px;margin-top:2px}
+body.p2 .sh{background:var(--teal-lt);color:var(--teal)}
+.foot{text-align:center;padding:20px 0 6px;font-size:10px;color:var(--lt);letter-spacing:2px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-dots"></div>
+  <h1>My Facial <em>Care</em> Routine</h1>
+  <p class="hdr-sub">Personal Ritual</p>
+  <div class="hdr-date" id="hdrDate">—</div>
+  <div class="ptoggle">
+    <button class="ptbtn on" id="pt1" onclick="setPhase(1)">Phase 1</button>
+    <button class="ptbtn" id="pt2" onclick="setPhase(2)">Phase 2 · Centella</button>
+  </div>
+</div>
+<div class="inst" id="instBanner" style="display:none">
+  <p><strong>Add to Home Screen</strong> for a real app experience</p>
+  <button class="inst-btn" id="instBtn">Install ✨</button>
+  <button class="inst-x" onclick="document.getElementById('instBanner').style.display='none'">×</button>
+</div>
+<div class="sync-bar"><div class="sdot" id="sdot"></div><span id="stxt">—</span></div>
+<nav class="nav">
+  <button class="tab on" onclick="go('morning')"><i>🌞</i>Morning</button>
+  <button class="tab" onclick="go('night')"><i>🌙</i>Night</button>
+  <button class="tab" onclick="go('wednesday')"><i>🧖‍♀️</i>Wed</button>
+  <button class="tab" onclick="go('log')"><i>📓</i>Log</button>
+  <button class="tab" onclick="go('extras')"><i>✨</i>Extras</button>
+</nav>
+<!-- MORNING -->
+<div class="pg on" id="pg-morning">
+  <div class="badge" id="mb">🌸 Phase 1 · Morning</div>
+  <div class="prog-wrap"><div class="prog-lbl">Today's Progress <span id="mtxt">0/7</span></div><div class="prog-bar"><div class="prog-fill" id="mfill" style="width:0%"></div></div></div>
+  <div id="malert" class="alert" style="display:none"><span>⚠️</span><span id="malerttxt"></span></div>
+  <div id="morning-cards"></div>
+  <button class="reset" onclick="rst('morning')">↺ Reset Morning</button>
+</div>
+<!-- NIGHT -->
+<div class="pg" id="pg-night">
+  <div class="badge" id="nb">🌙 Phase 1 · Night</div>
+  <div class="sec"><span>📅</span><h2>Tonight's Treatment</h2><div class="ln"></div></div>
+  <div class="day-row">
+    <button class="dbtn" data-d="0" onclick="selDay(0)">Sun</button>
+    <button class="dbtn" data-d="1" onclick="selDay(1)">Mon</button>
+    <button class="dbtn" data-d="2" onclick="selDay(2)">Tue</button>
+    <button class="dbtn" data-d="3" onclick="selDay(3)">Wed</button>
+    <button class="dbtn" data-d="4" onclick="selDay(4)">Thu</button>
+    <button class="dbtn" data-d="5" onclick="selDay(5)">Fri</button>
+    <button class="dbtn" data-d="6" onclick="selDay(6)">Sat</button>
+  </div>
+  <div class="tx-card"><div class="tx-night" id="txn">—</div><div class="tx-name" id="txname">—</div><div class="tx-follow" id="txf">—</div><div class="tx-vibe" id="txv">—</div></div>
+  <div class="sec" style="margin-top:20px"><span>🧼</span><h2>Night Routine</h2><div class="ln"></div></div>
+  <div class="info"><strong>🔑 Every Night — In Order</strong>Cleanse → Tone/Essence → Treatment → Moisturizer → Optional sealing mask → Lash serum → Lip mask</div>
+  <div id="night-cards"></div>
+  <button class="reset" onclick="rst('night')">↺ Reset Night</button>
+</div>
+<!-- WEDNESDAY -->
+<div class="pg" id="pg-wednesday">
+  <div class="badge" id="wb">🧖‍♀️ Wednesday Ritual</div>
+  <div class="info"><strong>📅 Two-Week Rotation</strong>Weeks 1 &amp; 3 → Dermaplane · Weeks 2 &amp; 4 → Steam + Mask. In dermaplane weeks, skip Thursday Lactic Acid.</div>
+  <div class="wtoggle">
+    <button class="wtbtn on" onclick="wedSw('steam')" id="wbs">🌫 Steam + Mask</button>
+    <button class="wtbtn" onclick="wedSw('derma')" id="wbd">🪒 Dermaplane</button>
+  </div>
+  <div class="wed-sec vis" id="wed-steam">
+    <div id="wsc"></div>
+    <div class="sec"><span>🎭</span><h2>Pick Your Mask</h2><div class="ln"></div></div>
+    <p style="font-size:12px;color:var(--lt);margin-bottom:12px">Choose based on what your skin needs tonight:</p>
+    <div class="mask-grid" id="mgrid"></div>
+    <div style="margin-top:12px"><button onclick="openForm('steam')" style="width:100%;padding:11px;background:linear-gradient(135deg,rgba(126,200,200,.2),rgba(90,158,158,.15));border:1.5px solid rgba(90,158,158,.4);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:12px;color:#3A7A7A;cursor:pointer;">📝 Log this Wednesday session</button></div>
+    <div id="wsf"></div>
+    <button class="reset" onclick="rst('wed-steam')">↺ Reset Steam</button>
+  </div>
+  <div class="wed-sec" id="wed-derma">
+    <div class="dp-card"><h3>🪒 Dermaplane Night</h3><p>Removes dead skin + peach fuzz for dramatically better product absorption.</p>
+      <ul class="dp-rules">
+        <li>❌ Skip Thursday Lactic Acid this same week</li>
+        <li>❌ Skip Calming/Brightening Pad tomorrow morning</li>
+        <li>❌ Skip if active breakouts or irritation</li>
+        <li>✅ Extra SPF tomorrow — skin more sun-sensitive</li>
+        <li>✅ Every 2–4 weeks only</li>
+      </ul>
+    </div>
+    <div style="margin-bottom:12px"><button onclick="openForm('derma')" style="width:100%;padding:11px;background:linear-gradient(135deg,rgba(201,169,110,.15),rgba(176,107,85,.1));border:1.5px solid rgba(201,169,110,.4);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:12px;color:#8B6914;cursor:pointer;">📝 Log this dermaplane session</button></div>
+    <div id="wdc"></div>
+    <button class="reset" onclick="rst('wed-derma')">↺ Reset Dermaplane</button>
+  </div>
+</div>
+<!-- LOG -->
+<div class="pg" id="pg-log">
+  <div class="badge">📓 Skin Journal</div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-icon">🪒</div><div class="stat-label">Last Dermaplaned</div><div class="stat-val" id="sderma">—</div><div class="stat-sub" id="sdermaago"></div></div>
+    <div class="stat-card"><div class="stat-icon">🌫</div><div class="stat-label">Last Steamed</div><div class="stat-val" id="ssteam">—</div><div class="stat-sub" id="ssteamago"></div></div>
+  </div>
+  <div class="sec"><span>⚡</span><h2>Quick Log</h2><div class="ln"></div></div>
+  <div class="qlog-grid">
+    <button class="qlog-btn" onclick="openForm('derma')"><span class="qico">🪒</span>Dermaplaned<span class="qlbl">Log a session</span></button>
+    <button class="qlog-btn" onclick="openForm('steam')"><span class="qico">🌫</span>Steamed + Mask<span class="qlbl">Log a session</span></button>
+    <button class="qlog-btn" onclick="openForm('treatment')"><span class="qico">💊</span>Treatment Used<span class="qlbl">Log what you used</span></button>
+    <button class="qlog-btn" onclick="openForm('note')"><span class="qico">📝</span>Skin Note<span class="qlbl">General observation</span></button>
+  </div>
+  <div id="lfwrap" style="display:none"></div>
+  <div class="sec"><span>📖</span><h2>Journal</h2><div class="ln"></div></div>
+  <div id="jlist"></div>
+  <div class="sec"><span>📸</span><h2>Progress Photos</h2><div class="ln"></div></div>
+  <div class="pup-area"><input type="file" accept="image/*" id="photoInput" onchange="handlePhoto(event)" multiple><div class="pup-ico">📸</div><div class="pup-title">Add Progress Photo</div><div class="pup-sub">Tap to upload · stays private on your device</div></div>
+  <div class="photo-grid" id="pgrid"></div>
+</div>
+<!-- EXTRAS -->
+<div class="pg" id="pg-extras">
+  <div class="badge" id="eb">💡 Phase 1 · Extras</div>
+  <div class="sec"><span>📅</span><h2>Weekly Schedule</h2><div class="ln"></div></div>
+  <div class="sw"><table class="st">
+    <tr><th>Day</th><th>Night Treatment</th></tr>
+    <tr id="r0"><td>Sun</td><td id="s0">—</td></tr>
+    <tr id="r1"><td>Mon</td><td id="s1">—</td></tr>
+    <tr id="r2"><td>Tue</td><td id="s2">—</td></tr>
+    <tr id="r3"><td>Wed</td><td id="s3">—</td></tr>
+    <tr id="r4"><td>Thu</td><td id="s4">—</td></tr>
+    <tr id="r5"><td>Fri</td><td id="s5">—</td></tr>
+    <tr id="r6"><td>Sat</td><td id="s6">—</td></tr>
+  </table></div>
+  <div id="econtent"></div>
+  <div class="foot" id="efoot">Phase 1 · My Facial Care Routine ✨</div>
+</div>
+<!-- COMPARE -->
+<div class="cmp-ov" id="cmpOv">
+  <div class="cmp-hdr"><div class="cmp-title">Progress Photos</div><button class="cmp-x" onclick="closeCmp()">×</button></div>
+  <div class="cmp-body">
+    <div class="cmp-tabs">
+      <button class="cmp-tab on" onclick="setCmpMode('single')">Single View</button>
+      <button class="cmp-tab" onclick="setCmpMode('compare')">Before / After</button>
+    </div>
+    <div class="cmp-imgs" id="cmpImgs"></div>
+    <div class="cmp-nav" id="cmpNav"></div>
+  </div>
+</div>
+<script>
+// ══ SUPABASE ══
+const SU='https://uvqjswdfcixwktgvnzbq.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2cWpzd2RmY2l4d2t0Z3ZuemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzNDExMzEsImV4cCI6MjA4NzkxNzEzMX0.SMB9fnxmLHFNTNkJk47UFpMqlccv_wvJOYAicvGxqoI';
+const SH={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json'};
+const SID='melissa_facial';
+function ss(s){const d=document.getElementById('sdot'),t=document.getElementById('stxt');if(s==='ok'){d.className='sdot ok';t.textContent='Synced';}else if(s==='err'){d.className='sdot err';t.textContent='Offline';}else if(s==='ing'){d.className='sdot ing';t.textContent='Syncing...';}else{d.className='sdot';t.textContent='—';}}
+async function sbLoad(){try{const r=await fetch(`${SU}/rest/v1/user_data?id=eq.${SID}&select=facial_ritual`,{headers:SH});if(!r.ok)throw 0;const d=await r.json();ss('ok');return d&&d[0]&&d[0].facial_ritual?d[0].facial_ritual:null;}catch{ss('err');return null;}}
+async function sbSave(data){ss('ing');try{const r=await fetch(`${SU}/rest/v1/user_data`,{method:'POST',headers:{...SH,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:SID,facial_ritual:data})});if(!r.ok)throw 0;ss('ok');return true;}catch{ss('err');return false;}}
+
+// ══ PHASE DATA ══
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now=new Date(),TI=now.getDay();
+let AP=parseInt(localStorage.getItem('fcr_phase')||'1');
+
+const PD={
+1:{
+  mb:'🌸 Phase 1 · Morning',nb:'🌙 Phase 1 · Night',wb:'🧖‍♀️ Wednesday Ritual',eb:'💡 Phase 1 · Extras',
+  ms:[
+    {id:'m1',n:'1',l:'Cleanser',nm:'Sulwhasoo Foam or Good Molecules Gel',no:'Foam for normal mornings · Gel if dehydrated'},
+    {id:'m2',n:'2',l:'Essence',nm:'Joseon Ginseng Essence Water',no:'Pat gently into skin until absorbed'},
+    {id:'m3',n:'3',l:'Brightening Pad — Mon/Wed/Fri',nm:'Anua Niacinamide 5% + TXA Pad',no:'Gently swipe — never rub. Skip morning after dermaplaning.',tg:[{l:'Mon · Wed · Fri'},{l:'Skip if sensitive',c:'r'}]},
+    {id:'m4',n:'4',l:'Serum — Non-Pad Days',nm:'Anua Niacinamide 10 + TXA Serum',no:'Tue/Thu/Sat/Sun only. On pad days use Snail Mucin (4b) instead.',tg:[{l:'Tue · Thu · Sat · Sun'}]},
+    {id:'m4b',n:'4b',l:'Serum — Pad Days Only',nm:'Cosrx Snail Mucin',no:'Swap in on Mon/Wed/Fri — avoids TXA double-up.',tg:[{l:'Mon · Wed · Fri'}]},
+    {id:'m5',n:'5',l:'Mist — Before Moisturizer',nm:"d'Alba Aromatic Spray",no:'Spritz while skin is slightly damp from serum.',tg:[{l:'Optional glow boost'}]},
+    {id:'m6',n:'6',l:'Moisturizer',nm:'Anua Ceramide 3 + Panthenol',no:"Press into skin, don't rub."},
+    {id:'m7',n:'7',l:'SPF — Always Last',nm:'Cosrx Vitamin E Sunscreen',no:'2 finger-lengths every morning.',tg:[{l:'☀️ Never Skip',c:'r'}]}
+  ],
+  ns:[
+    {id:'n1',n:'1',l:'First Cleanse',nm:'Bobbi Brown Soothing Cleansing Oil',no:'Massage on dry skin, emulsify with water. If SPF/makeup worn.',tg:[{l:'If SPF / makeup worn'}]},
+    {id:'n2',n:'2',l:'Second Cleanse',nm:'Sulwhasoo Foam or Good Molecules Gel',no:'Follow oil cleanser with water-based cleanser.'},
+    {id:'n3',n:'3',l:'Essence',nm:'Joseon Ginseng Essence Water',no:'Pat into slightly damp skin.'},
+    {id:'n4',n:'4',l:"Tonight's Treatment",nm:'See treatment card above ↑',no:'Refer to treatment card for tonight\'s product.'},
+    {id:'n5',n:'5',l:'Moisturizer — Always',nm:'Anua Ceramide 3 + Panthenol',no:'Follow every treatment with this to protect your barrier overnight.'},
+    {id:'n6',n:'6',l:'Sealing Mask — Optional',nm:'Medicube Collagen Night Wrapping Mask',no:'Last step before eye/lip. Optional on retinol/acid nights.',tg:[{l:'2–4 nights/week'},{l:'Optional on retinol/acid nights',c:'r'}]},
+    {id:'n7',n:'7',l:'Lash & Brow',nm:'Terez & Honor Lash + Brow Serums',no:'Every night. Lash line like eyeliner, brows on sparse areas.',tg:[{l:'Every night',c:'g'}]},
+    {id:'n8',n:'8',l:'Lip — Very Last Step',nm:'Laneige Lip Sleeping Mask',no:'Generous application as your absolute last step.',tg:[{l:'Always last',c:'g'}]}
+  ],
+  wss:[
+    {id:'ws1',n:'1',l:'Double Cleanse',nm:'Bobbi Brown Oil → Second Cleanser',no:'Thorough cleanse before masking.'},
+    {id:'ws2',n:'2',l:'Steam',nm:'Facial Steamer',no:'5–8 minutes to open pores.',tg:[{l:'5–8 minutes'}]},
+    {id:'ws3',n:'3',l:'Essence',nm:'Joseon Ginseng Essence Water',no:'Pat in while skin is warm and receptive.'}
+  ],
+  wsf:[
+    {id:'ws4',n:'4',l:'Apply Mask',nm:'Selected mask above',no:'Follow mask instructions. Rinse if required.'},
+    {id:'ws5',n:'5',l:'Moisturizer',nm:'Anua Ceramide 3 + Panthenol',no:'Seal in all the mask goodness.'},
+    {id:'ws6',n:'6',l:'Lash & Brow',nm:'Terez & Honor Serums',no:'Apply after skincare.'},
+    {id:'ws7',n:'7',l:'Lip — Last Step',nm:'Laneige Lip Sleeping Mask',no:'Always last.'}
+  ],
+  wds:[
+    {id:'wd1',n:'1',l:'Cleanse — Dry Completely',nm:'Sulwhasoo Foam or Good Molecules Gel',no:'Pat bone dry before dermaplaning.',tg:[{l:'Must be completely dry',c:'r'}]},
+    {id:'wd2',n:'2',l:'Dermaplane',nm:'Dermaplane Tool',no:'Hold skin taut. Feather-light upward strokes at 45°. Avoid eye area.',tg:[{l:'45° angle'},{l:'Dry skin only'},{l:'Avoid eye area',c:'r'}]},
+    {id:'wd3',n:'3',l:'Rinse',nm:'Cool water rinse',no:'Gently rinse, pat dry — do not rub.'},
+    {id:'wd4',n:'4',l:'Essence',nm:'Joseon Ginseng Essence Water',no:'Pat gently — skin absorbs beautifully right now.'},
+    {id:'wd5',n:'5',l:'Mask',nm:'Anua PDRN + Hyaluron Mask',no:'Or Keana Rice if sensitive. No brightening masks tonight.',tg:[{l:'Best post-dermaplane',c:'g'}]},
+    {id:'wd6',n:'6',l:'Moisturizer',nm:'Anua Ceramide 3 + Panthenol',no:'Be generous — barrier needs extra support.'},
+    {id:'wd7',n:'7',l:'Lash & Brow',nm:'Terez & Honor Serums',no:'Apply after skincare.'},
+    {id:'wd8',n:'8',l:'Lip — Last Step',nm:'Laneige Lip Sleeping Mask',no:'Always last.'}
+  ],
+  mk:[
+    {i:'✨',nm:'Joseon Ground Rice & Honey',b:'Brightening + glow'},
+    {i:'💧',nm:'Anua PDRN + Hyaluron',b:'Deep hydration'},
+    {i:'🌾',nm:'Keana Rice Mask',b:'Soothing + pores'},
+    {i:'🌙',nm:'Medicube Collagen Night Mask',b:'Firmness + sleep'}
+  ],
+  tx:{
+    0:{nm:'Cosrx Snail Mucin',fw:'Anua Ceramide 3 + Panthenol',vb:'🌿 Barrier Repair'},
+    1:{nm:'Cosrx Snail Mucin',fw:'Anua Ceramide 3 + Panthenol',vb:'💧 Gentle Start'},
+    2:{nm:'The Ordinary Retinol 0.5% in Squalane',fw:'Anua Ceramide 3 + Panthenol',vb:'⚡ Anti-Aging + Texture'},
+    3:{nm:'🧖‍♀️ Wednesday Ritual — See Ritual Tab',fw:'See Wednesday tab',vb:'🌿 Mask / Dermaplane Night'},
+    4:{nm:'The Ordinary Lactic Acid 10% + HA',fw:'Anua Ceramide 3 + Panthenol',vb:'🌀 Exfoliation Night'},
+    5:{nm:'The Ordinary Niacinamide 10% + Zinc',fw:'Anua Ceramide 3 + Panthenol',vb:'🫧 Oil Control + Pores'},
+    6:{nm:'Anua Peach 70 + Niacin Serum',fw:'Anua Ceramide 3 + Panthenol',vb:'✨ Brightening Night'}
+  },
+  sc:[
+    {nm:'Cosrx Snail Mucin',lb:'Barrier Repair'},{nm:'Cosrx Snail Mucin',lb:'Gentle Start'},
+    {nm:'Retinol 0.5%',lb:'Anti-Aging'},{nm:'🧖‍♀️ Mask / Dermaplane',lb:'Midweek Reset'},
+    {nm:'Lactic Acid 10%',lb:'Exfoliation'},{nm:'TO Niacinamide 10% + Zinc',lb:'Oil Control'},
+    {nm:'Anua Peach 70 + Niacin',lb:'Brightening'}
+  ],
+  ex:`<div class="sec"><span>💋</span><h2>Lip Care</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">🫐 Brooklyn Botany Vanilla Lip Scrub</div><div class="xdesc">1–2 nights per week. Always follow with Laneige Lip Sleeping Mask.</div><div class="pills"><div class="pill g">1–2 nights/week</div><div class="pill">Always follow with Laneige</div></div></div>
+  <div class="sec"><span>👁</span><h2>Lash & Brow</h2><div class="ln"></div></div>
+  <div class="info"><strong>⚠️ Keep Separate</strong>Serum and castor oil on the same night can clog follicles. Always alternate.</div>
+  <div class="xcrd"><div class="xtitle">✨ Terez & Honor Lash + Brow Serum</div><div class="xdesc">Every night. Lash line like eyeliner, sparse brow areas.</div><div class="pills"><div class="pill g">Mon · Wed · Fri · Sun</div></div></div>
+  <div class="xcrd"><div class="xtitle">🫒 Castor Oil — Brows & Lashes</div><div class="xdesc">2–3 nights per week max. Alternate nights from lash serum.</div><div class="pills"><div class="pill g">Tue · Thu · Sat (pick 2–3)</div><div class="pill">Max 3 nights/week</div></div></div>
+  <div class="sec"><span>🌫</span><h2>Mist</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">🌫 d'Alba Aromatic Spray</div><div class="xdesc">AM: after serum, before moisturizer. Midday: over makeup. Night: after retinol for comfort.</div><div class="pills"><div class="pill g">AM: After serum, before moisturizer</div><div class="pill">Midday: Over makeup</div></div></div>
+  <div class="sec"><span>🪒</span><h2>Dermaplane Quick Ref</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">🪒 Dermaplane Rules</div><div class="xdesc">Every 2–4 weeks, Wednesday nights. Completely dry skin, 45° angle. Skip Thu Lactic Acid. Skip Brightening Pad next morning. Extra SPF next morning.</div><div class="pills"><div class="pill g">Every 2–4 weeks</div><div class="pill">Wednesday only</div><div class="pill">Dry · 45°</div></div></div>
+  <div class="sec"><span>⚠️</span><h2>Ingredient Reminders</h2><div class="ln"></div></div>
+  <div class="alert"><span>⚠️</span><span>Never use Retinol and Lactic Acid back-to-back — spaced Tue/Thu intentionally.</span></div>
+  <div class="alert"><span>⚠️</span><span>TXA is in both the brightening pad AND the Anua 10+TXA serum — never use both same day.</span></div>
+  <div class="alert"><span>⚠️</span><span>Always follow Retinol with Anua Ceramide to protect your barrier.</span></div>
+  <div class="alert"><span>⚠️</span><span>SPF every morning — especially after dermaplaning, retinol, or any acid night.</span></div>`
+},
+2:{
+  mb:'🌿 Phase 2 · Morning',nb:'🌿 Phase 2 · Night',wb:'🧖‍♀️ Wednesday Ritual',eb:'💡 Phase 2 · Extras',
+  ms:[
+    {id:'m1',n:'1',l:'Cleanser',nm:'SKIN1004 Ampoule Foam or Poremizing Deep Cleansing Foam',no:'Ampoule Foam for normal mornings · Poremizing if skin feels congested'},
+    {id:'m2',n:'2',l:'Toner',nm:'SKIN1004 Madagascar Centella Toning Toner',no:'Pat or press gently into skin. Centella soothes while toning.',tg:[{l:'Centella toning',c:'t'}]},
+    {id:'m3',n:'3',l:'Calming Pad — Mon/Wed/Fri',nm:'SKIN1004 Madagascar Centella Calming Pad',no:'Gently swipe to soothe and lightly exfoliate. Skip morning after dermaplaning.',tg:[{l:'Mon · Wed · Fri'},{l:'Soothing — no TXA conflict',c:'t'}]},
+    {id:'m4',n:'4',l:'Serum — Daily',nm:'SKIN1004 Madagascar Centella Asiatica Ampoule 100ml',no:'Your star centella serum. Pat in gently. Main active — use every morning.',tg:[{l:'Daily use',c:'t'}]},
+    {id:'m5',n:'5',l:'Moisturizer',nm:'SKIN1004 Hyalu-Cica Moisture Cream',no:'Lightweight daily moisturizer. Rotate with Soothing Cream on sensitive days.',tg:[{l:'Rotate with Soothing Cream'}]},
+    {id:'m6',n:'6',l:'SPF — Always Last',nm:'SKIN1004 Hyalu-Cica Water-fit Sunscreen',no:'2 finger-lengths every morning. Extra important after dermaplaning.',tg:[{l:'☀️ Never Skip',c:'r'}]}
+  ],
+  ns:[
+    {id:'n1',n:'1',l:'First Cleanse',nm:'SKIN1004 Light Cleansing Oil 30ml',no:'Massage on dry skin, emulsify with water. If SPF/makeup worn.',tg:[{l:'If SPF / makeup worn'}]},
+    {id:'n2',n:'2',l:'Second Cleanse',nm:'SKIN1004 Ampoule Foam',no:'Follow oil cleanser with water-based cleanser.'},
+    {id:'n3',n:'3',l:'Toner',nm:'SKIN1004 Madagascar Centella Toning Toner',no:'Pat into slightly damp skin.'},
+    {id:'n4',n:'4',l:"Tonight's Treatment",nm:'See treatment card above ↑',no:'Refer to treatment card for tonight\'s product.'},
+    {id:'n5',n:'5',l:'Moisturizer — Always',nm:'SKIN1004 Probio-Cica Enrich Cream',no:'Richer formula for overnight barrier repair. Use Soothing Cream for lighter nights.',tg:[{l:'Rotate: Soothing Cream lighter nights',c:'t'}]},
+    {id:'n6',n:'6',l:'Sealing Mask — Optional',nm:'Medicube Collagen Night Wrapping Mask',no:'Last step before eye/lip. Optional on acid nights.',tg:[{l:'2–4 nights/week'},{l:'Optional on acid nights',c:'r'}]},
+    {id:'n7',n:'7',l:'Lash & Brow',nm:'Terez & Honor Lash + Brow Serums',no:'Every night. Lash line like eyeliner, brows on sparse areas.',tg:[{l:'Every night',c:'g'}]},
+    {id:'n8',n:'8',l:'Lip — Very Last Step',nm:'Laneige Lip Sleeping Mask',no:'Generous application as your absolute last step.',tg:[{l:'Always last',c:'g'}]}
+  ],
+  wss:[
+    {id:'ws1',n:'1',l:'Double Cleanse',nm:'SKIN1004 Light Cleansing Oil → Ampoule Foam',no:'Thorough cleanse before masking.'},
+    {id:'ws2',n:'2',l:'Steam',nm:'Facial Steamer',no:'5–8 minutes to open pores.',tg:[{l:'5–8 minutes'}]},
+    {id:'ws3',n:'3',l:'Toner',nm:'SKIN1004 Madagascar Centella Toning Toner',no:'Pat in while skin is warm and receptive.'}
+  ],
+  wsf:[
+    {id:'ws4',n:'4',l:'Apply Sheet Mask',nm:'Selected mask above',no:'Leave on 15–20 min. Pat in remaining essence. No rinsing needed.'},
+    {id:'ws5',n:'5',l:'Moisturizer',nm:'SKIN1004 Soothing Cream or Probio-Cica Enrich Cream',no:'Layer over any remaining mask essence.'},
+    {id:'ws6',n:'6',l:'Lash & Brow',nm:'Terez & Honor Serums',no:'Apply after skincare.'},
+    {id:'ws7',n:'7',l:'Lip — Last Step',nm:'Laneige Lip Sleeping Mask',no:'Always last.'}
+  ],
+  wds:[
+    {id:'wd1',n:'1',l:'Cleanse — Dry Completely',nm:'SKIN1004 Ampoule Foam or Poremizing Foam',no:'Pat bone dry before dermaplaning.',tg:[{l:'Must be completely dry',c:'r'}]},
+    {id:'wd2',n:'2',l:'Dermaplane',nm:'Dermaplane Tool',no:'Hold skin taut. Feather-light upward strokes at 45°. Avoid eye area.',tg:[{l:'45° angle'},{l:'Dry skin only'},{l:'Avoid eye area',c:'r'}]},
+    {id:'wd3',n:'3',l:'Rinse',nm:'Cool water rinse',no:'Gently rinse, pat dry — do not rub.'},
+    {id:'wd4',n:'4',l:'Toner',nm:'SKIN1004 Madagascar Centella Toning Toner',no:'Centella soothes freshly dermaplaned skin beautifully.',tg:[{l:'Soothing post-dermaplane',c:'t'}]},
+    {id:'wd5',n:'5',l:'Mask — Best Pick Tonight',nm:'Mediheal Madecassoside Sheet Mask',no:'Madecassoside (centella) is perfect post-dermaplane. Or Collagen mask for firmness.',tg:[{l:'Best post-dermaplane',c:'g'}]},
+    {id:'wd6',n:'6',l:'Serum',nm:'SKIN1004 Centella Asiatica Ampoule',no:'Skin absorbs this deeply post-dermaplane.',tg:[{l:'Deep absorption tonight',c:'t'}]},
+    {id:'wd7',n:'7',l:'Moisturizer',nm:'SKIN1004 Probio-Cica Enrich Cream',no:'Be generous — barrier needs extra support.'},
+    {id:'wd8',n:'8',l:'Lash & Brow',nm:'Terez & Honor Serums',no:'Apply after skincare.'},
+    {id:'wd9',n:'9',l:'Lip — Last Step',nm:'Laneige Lip Sleeping Mask',no:'Always last.'}
+  ],
+  mk:[
+    {i:'🧬',nm:'Mediheal Collagen Sheet Mask',b:'Firmness + plumping'},
+    {i:'🌿',nm:'Mediheal Madecassoside Sheet Mask',b:'Centella · soothing + repair'},
+    {i:'🫧',nm:'Mediheal Tea Tree Sheet Mask',b:'Blemishes + purifying'},
+    {i:'🌙',nm:'Medicube Collagen Night Wrapping Mask',b:'Seal in moisture · sleep pack'}
+  ],
+  tx:{
+    0:{nm:'Cosrx Snail Mucin',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'🌿 Barrier Repair'},
+    1:{nm:'Cosrx Snail Mucin',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'💧 Gentle Start'},
+    2:{nm:'SKIN1004 Centella Asiatica Ampoule',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'🌿 Centella Intensive Night'},
+    3:{nm:'🧖‍♀️ Wednesday Ritual — See Ritual Tab',fw:'See Wednesday tab',vb:'🌿 Mask / Dermaplane Night'},
+    4:{nm:'The Ordinary Lactic Acid 10% + HA',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'🌀 Exfoliation Night'},
+    5:{nm:'The Ordinary Niacinamide 10% + Zinc',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'🫧 Oil Control + Pores'},
+    6:{nm:'SKIN1004 Centella Asiatica Ampoule',fw:'SKIN1004 Probio-Cica Enrich Cream',vb:'✨ Double Centella Week'}
+  },
+  sc:[
+    {nm:'Cosrx Snail Mucin',lb:'Barrier Repair'},{nm:'Cosrx Snail Mucin',lb:'Gentle Start'},
+    {nm:'SKIN1004 Centella Ampoule',lb:'Centella Night'},{nm:'🧖‍♀️ Mask / Dermaplane',lb:'Midweek Reset'},
+    {nm:'Lactic Acid 10%',lb:'Exfoliation'},{nm:'TO Niacinamide 10% + Zinc',lb:'Oil Control'},
+    {nm:'SKIN1004 Centella Ampoule',lb:'Double Centella'}
+  ],
+  ex:`<div class="p2-banner"><span>🌿</span><span><strong>Phase 2 — barrier repair and centella soothing.</strong> No retinol, no TXA. Let your skin reset and glow with SKIN1004 centella.</span></div>
+  <div class="sec"><span>🌿</span><h2>Moisturizer Rotation</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">Rotate Your 3 Moisturizers</div><div class="xdesc"><strong>Soothing Cream 30ml</strong> — lightweight, for normal AM and lighter nights.<br><br><strong>Hyalu-Cica Moisture Cream</strong> — hydration boost, AM daily or PM hydration nights.<br><br><strong>Probio-Cica Enrich Cream</strong> — richest, best for PM always especially after actives.</div><div class="pills"><div class="pill g">Soothing: AM or lighter nights</div><div class="pill g">Hyalu-Cica: AM daily</div><div class="pill g">Probio-Cica: PM always</div></div></div>
+  <div class="sec"><span>🧬</span><h2>Mediheal Mask Guide</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">When to Use Each Mask</div><div class="xdesc">🧬 <strong>Collagen</strong> — firmness + plumping. Best after lactic acid week or for a glow boost.<br><br>🌿 <strong>Madecassoside</strong> — centella soothing + repair. Best pick post-dermaplane or after any active night.<br><br>🫧 <strong>Tea Tree</strong> — use when you notice blemishes or congestion forming.</div><div class="pills"><div class="pill g">15–20 min per mask</div><div class="pill">Pat in remaining essence — don't rinse</div></div></div>
+  <div class="sec"><span>👁</span><h2>Lash & Brow</h2><div class="ln"></div></div>
+  <div class="info"><strong>⚠️ Keep Separate</strong>Serum and castor oil on the same night can clog follicles. Always alternate.</div>
+  <div class="xcrd"><div class="xtitle">✨ Terez & Honor Lash + Brow Serum</div><div class="xdesc">Every night. Lash line like eyeliner, sparse brow areas.</div><div class="pills"><div class="pill g">Mon · Wed · Fri · Sun</div></div></div>
+  <div class="xcrd"><div class="xtitle">🫒 Castor Oil — Brows & Lashes</div><div class="xdesc">2–3 nights per week max. Alternate nights from lash serum.</div><div class="pills"><div class="pill g">Tue · Thu · Sat (pick 2–3)</div><div class="pill">Max 3 nights/week</div></div></div>
+  <div class="sec"><span>🪒</span><h2>Dermaplane Quick Ref</h2><div class="ln"></div></div>
+  <div class="xcrd"><div class="xtitle">🪒 Dermaplane Rules</div><div class="xdesc">Every 2–4 weeks, Wednesday nights. Completely dry skin, 45° angle. Skip Thu Lactic Acid. Skip Calming Pad next morning. Extra SPF next morning. Best mask: Mediheal Madecassoside.</div><div class="pills"><div class="pill g">Every 2–4 weeks</div><div class="pill">Wednesday only</div><div class="pill">Dry · 45°</div></div></div>
+  <div class="sec"><span>⚠️</span><h2>Ingredient Reminders</h2><div class="ln"></div></div>
+  <div class="alert"><span>⚠️</span><span>Lactic Acid (Thu) and Niacinamide (Fri) are your only strong actives in Phase 2. Everything else is centella-focused.</span></div>
+  <div class="alert"><span>⚠️</span><span>SPF every morning — especially after dermaplaning or any acid night.</span></div>
+  <div class="alert"><span>⚠️</span><span>The Centella Ampoule is used Tue + Sat nights — double centella for intensive repair. This is intentional.</span></div>`
+}};
+
+// ══ RENDER ══
+function bc(s,r){
+  const tgs=(s.tg||[]).map(t=>`<span class="tag ${t.c||''}">${t.l}</span>`).join('');
+  return`<div class="card" onclick="tap(this,'${r}')" data-id="${s.id}" data-num="${s.n}"><div class="cnum">${s.n}</div><div class="cbody"><div class="clbl">${s.l}</div><div class="cname">${s.nm}</div><div class="cnote">${s.no}</div>${tgs?`<div class="tags">${tgs}</div>`:''}</div><div class="chk"></div></div>`;
+}
+
+function rp(p){
+  const ph=PD[p];
+  document.body.className=p===2?'p2':'';
+  document.getElementById('mb').textContent=ph.mb;
+  document.getElementById('nb').textContent=ph.nb;
+  document.getElementById('wb').textContent=ph.wb;
+  document.getElementById('eb').textContent=ph.eb;
+  document.getElementById('pt1').classList.toggle('on',p===1);
+  document.getElementById('pt2').classList.toggle('on',p===2);
+  document.getElementById('morning-cards').innerHTML=ph.ms.map(s=>bc(s,'morning')).join('');
+  document.getElementById('night-cards').innerHTML=ph.ns.map(s=>bc(s,'night')).join('');
+  document.getElementById('wsc').innerHTML=ph.wss.map(s=>bc(s,'wed-steam')).join('');
+  document.getElementById('wsf').innerHTML=ph.wsf.map(s=>bc(s,'wed-steam')).join('');
+  document.getElementById('wdc').innerHTML=ph.wds.map(s=>bc(s,'wed-derma')).join('');
+  document.getElementById('mgrid').innerHTML=ph.mk.map(m=>`<div class="mcrd" onclick="pickMask(this,'${m.nm}')"><div class="mico">${m.i}</div><div class="mnm">${m.nm}</div><div class="mbn">${m.b}</div></div>`).join('');
+  ph.sc.forEach((s,i)=>{document.getElementById('s'+i).innerHTML=`${s.nm}<br><span class="sh">${s.lb}</span>`;});
+  for(let i=0;i<7;i++){const r=document.getElementById('r'+i);if(r)r.classList.toggle('tr',i===TI);}
+  document.getElementById('econtent').innerHTML=ph.ex;
+  document.getElementById('efoot').textContent=(p===1?'Phase 1':'Phase 2 · Centella')+' · My Facial Care Routine ✨';
+  if([1,3,5].includes(TI)){
+    document.getElementById('malert').style.display='flex';
+    document.getElementById('malerttxt').textContent=p===1
+      ?`Today is a pad day (${DAYS[TI]}). Use Step 3 (Brightening Pad) + Step 4b (Snail Mucin). Skip Niacinamide 10+TXA serum.`
+      :`Today is a Calming Pad day (${DAYS[TI]}). Use Step 3 (SKIN1004 Calming Pad) as your toning/exfoliation step.`;
+  } else {document.getElementById('malert').style.display='none';}
+  SS={};updateProg();selDay(TI);
+}
+
+function setPhase(p){AP=p;localStorage.setItem('fcr_phase',p);rp(p);window.scrollTo({top:0,behavior:'smooth'});}
+
+// ══ NAV ══
+function go(name){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+name).classList.add('on');
+  const idx=['morning','night','wednesday','log','extras'].indexOf(name);
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='log'){rStats();rJournal();rPhotos();}
+}
+
+// ══ STEPS ══
+let SS={};
+function tap(card,r){const id=card.dataset.id;SS[id]=!SS[id];card.classList.toggle('done',SS[id]);card.querySelector('.cnum').textContent=SS[id]?'✓':card.dataset.num;if(r==='morning')updateProg();}
+function updateProg(){const cards=document.querySelectorAll('#pg-morning .card');const done=[...cards].filter(c=>c.classList.contains('done')).length;document.getElementById('mfill').style.width=Math.round(done/(cards.length||1)*100)+'%';document.getElementById('mtxt').textContent=done+' / '+cards.length;}
+function rst(r){const sel=r==='morning'?'#pg-morning .card':r==='night'?'#pg-night .card':r==='wed-steam'?'#wed-steam .card':'#wed-derma .card';document.querySelectorAll(sel).forEach(c=>{c.classList.remove('done');c.querySelector('.cnum').textContent=c.dataset.num;delete SS[c.dataset.id];});if(r==='morning')updateProg();}
+function selDay(i){document.querySelectorAll('.dbtn').forEach(b=>b.classList.remove('on'));const b=document.querySelector(`.dbtn[data-d="${i}"]`);if(b)b.classList.add('on');const t=PD[AP].tx[i];document.getElementById('txn').textContent=DAYS[i].toUpperCase()+' NIGHT';document.getElementById('txname').textContent=t.nm;document.getElementById('txf').innerHTML='Follow with: <strong>'+t.fw+'</strong>';document.getElementById('txv').textContent=t.vb;const s4=document.querySelector('[data-id="n4"] .cname');if(s4)s4.textContent=t.nm;}
+function wedSw(m){document.getElementById('wed-steam').classList.toggle('vis',m==='steam');document.getElementById('wed-derma').classList.toggle('vis',m==='derma');document.getElementById('wbs').classList.toggle('on',m==='steam');document.getElementById('wbd').classList.toggle('on',m==='derma');}
+let SM='';
+function pickMask(card,nm){document.querySelectorAll('.mcrd').forEach(c=>c.classList.remove('on'));card.classList.add('on');SM=nm;}
+
+// ══ JOURNAL ══
+let JC=[];
+async function loadJ(){const d=await sbLoad();if(d&&d.journal){JC=d.journal;}else{try{JC=JSON.parse(localStorage.getItem('fcr_journal')||'[]');}catch{JC=[];}}}
+async function saveJ(){localStorage.setItem('fcr_journal',JSON.stringify(JC));const d=await sbLoad()||{};d.journal=JC;await sbSave(d);}
+function da(ds){if(!ds)return null;const df=Math.floor((new Date()-new Date(ds+'T00:00:00'))/(864e5));if(df===0)return'Today';if(df===1)return'Yesterday';return df+' days ago';}
+function fd(ds){if(!ds)return'—';const d=new Date(ds+'T00:00:00');return MONTHS[d.getMonth()]+' '+d.getDate();}
+function rStats(){const ld=JC.filter(e=>e.type==='derma').sort((a,b)=>b.ts-a.ts)[0];const ls=JC.filter(e=>e.type==='steam').sort((a,b)=>b.ts-a.ts)[0];document.getElementById('sderma').textContent=ld?fd(ld.date):'Never';document.getElementById('sdermaago').textContent=ld?da(ld.date):'No logs yet';document.getElementById('ssteam').textContent=ls?fd(ls.date):'Never';document.getElementById('ssteamago').textContent=ls?da(ls.date):'No logs yet';}
+function rJournal(){const sorted=[...JC].sort((a,b)=>b.ts-a.ts);const el=document.getElementById('jlist');if(!sorted.length){el.innerHTML='<div class="je-empty"><div class="je-ico">🌸</div>No entries yet — use Quick Log to start tracking.</div>';return;}const TL={derma:'🪒 Dermaplaned',steam:'🌫 Steamed + Mask',treatment:'💊 Treatment Used',note:'📝 Skin Note'};el.innerHTML=sorted.map(e=>{const ph=e.phase||1;const tt=e.type==='derma'?'Dermaplaning Session':e.type==='steam'?`Steamed · ${e.mask||'Mask used'}`:e.type==='treatment'?`Treatment: ${e.treatment||''}`:e.note||'Skin note';return`<div class="jentry type-${e.type}"><div class="jt-top"><span class="jt-type">${TL[e.type]||e.type}<span class="jt-ph ph${ph}">P${ph}</span></span><span class="jt-date">${fd(e.date)}</span></div><div class="jt-title">${tt}</div>${e.note&&e.type!=='note'?`<div class="jt-note">${e.note}</div>`:''}${e.condition?`<div class="jt-note">Skin: ${e.condition}</div>`:''}<button class="jt-del" onclick="delE('${e.id}')">×</button></div>`;}).join('');}
+async function delE(id){JC=JC.filter(e=>e.id!==id);await saveJ();rStats();rJournal();}
+
+let FT='';
+function openForm(type){FT=type;const wrap=document.getElementById('lfwrap');wrap.style.display='block';const td=new Date().toISOString().split('T')[0];const mk=AP===2?['Mediheal Collagen Sheet Mask','Mediheal Madecassoside Sheet Mask','Mediheal Tea Tree Sheet Mask','Medicube Collagen Night Wrapping Mask']:['Joseon Ground Rice & Honey','Anua PDRN + Hyaluron','Keana Rice Mask','Medicube Collagen Night Mask'];const tx=AP===2?['Cosrx Snail Mucin','SKIN1004 Centella Ampoule','Lactic Acid 10%','Niacinamide 10% + Zinc']:['Cosrx Snail Mucin','Retinol 0.5%','Lactic Acid 10%','Niacinamide 10% + Zinc','Anua Peach 70 + Niacin'];const co=['Normal','Glowing','Sensitive','Dry','Oily','Breakouts','Irritated'];const mo=mk.map(m=>`<option>${m}</option>`).join('');const to=tx.map(t=>`<option>${t}</option>`).join('');const co2=co.map(c=>`<option>${c}</option>`).join('');const ic={derma:'🪒',steam:'🌫',treatment:'💊',note:'📝'};const ti={derma:'Log Dermaplaning Session',steam:'Log Steam + Mask Session',treatment:'Log Treatment Used',note:'Add Skin Note'};let ex='';if(type==='steam')ex=`<label class="form-label">Mask Used</label><select class="form-select" id="fm"><option value="">Select mask...</option>${mo}</select><label class="form-label">Skin Condition After</label><select class="form-select" id="fc"><option value="">Select...</option>${co2}</select>`;if(type==='treatment')ex=`<label class="form-label">Treatment Used</label><select class="form-select" id="ftx"><option value="">Select treatment...</option>${to}</select><label class="form-label">Skin Reaction</label><select class="form-select" id="fc"><option value="">Select...</option>${co2}</select>`;if(type==='derma')ex=`<label class="form-label">Skin Condition After</label><select class="form-select" id="fc"><option value="">Select...</option>${co2}</select>`;wrap.innerHTML=`<div class="log-form"><h3>${ic[type]} ${ti[type]}</h3><label class="form-label">Date</label><input type="date" class="form-select" id="fd" value="${td}">${ex}<label class="form-label">Notes (optional)</label><textarea class="form-textarea" id="fn" placeholder="How did your skin feel? Any observations..."></textarea><div class="form-row"><button class="form-cancel" onclick="closeForm()">Cancel</button><button class="form-save" onclick="saveE()">Save Entry ✓</button></div></div>`;if(type==='steam'&&SM){const sel=document.getElementById('fm');if(sel)[...sel.options].forEach(o=>{if(o.value===SM)o.selected=true;});}wrap.scrollIntoView({behavior:'smooth',block:'start'});go('log');}
+function closeForm(){document.getElementById('lfwrap').style.display='none';document.getElementById('lfwrap').innerHTML='';}
+async function saveE(){const e={id:Date.now().toString()+Math.random().toString(36).slice(2),type:FT,phase:AP,date:document.getElementById('fd')?.value||new Date().toISOString().split('T')[0],note:document.getElementById('fn')?.value.trim()||'',mask:document.getElementById('fm')?.value||'',treatment:document.getElementById('ftx')?.value||'',condition:document.getElementById('fc')?.value||'',ts:Date.now()};JC.push(e);closeForm();rStats();rJournal();await saveJ();}
+
+// ══ PHOTOS ══
+function lp(){try{return JSON.parse(localStorage.getItem('fcr_photos')||'[]')}catch{return[]}}
+function sp(p){localStorage.setItem('fcr_photos',JSON.stringify(p))}
+function compress(file,cb){const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const M=900;let w=img.width,h=img.height;if(w>M){h=Math.round(h*M/w);w=M;}if(h>M){w=Math.round(w*M/h);h=M;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);cb(c.toDataURL('image/jpeg',.75));};img.src=e.target.result;};r.readAsDataURL(file);}
+function handlePhoto(evt){const files=[...evt.target.files];if(!files.length)return;const td=new Date().toISOString().split('T')[0];const lb=prompt('Label for this photo?','Week '+(lp().length+1))||'Photo';let done=0;files.forEach(file=>{compress(file,b64=>{const photos=lp();if(photos.length>=40){alert('Max 40 photos.');return;}photos.push({id:Date.now().toString()+Math.random(),date:td,label:lb,phase:AP,src:b64,ts:Date.now()});sp(photos);done++;if(done===files.length)rPhotos();});});evt.target.value='';}
+function rPhotos(){const photos=lp().sort((a,b)=>b.ts-a.ts);const g=document.getElementById('pgrid');if(!photos.length){g.innerHTML='';return;}g.innerHTML=photos.map((p,i)=>`<div class="pt" onclick="openCmp(${i})"><img src="${p.src}" alt="${p.label}" loading="lazy"><div class="pt-ov"></div><div class="pt-lbl">${p.label}${p.phase===2?' · P2':''}</div></div>`).join('');}
+
+let CM='single',CA=0,CB=1;
+function openCmp(i){CA=i;CB=i>0?i-1:i;document.getElementById('cmpOv').classList.add('vis');document.body.style.overflow='hidden';renderCmp();}
+function closeCmp(){document.getElementById('cmpOv').classList.remove('vis');document.body.style.overflow='';}
+function setCmpMode(m){CM=m;document.querySelectorAll('.cmp-tab').forEach((t,i)=>t.classList.toggle('on',['single','compare'][i]===m));renderCmp();}
+function renderCmp(){const photos=lp().sort((a,b)=>b.ts-a.ts);if(!photos.length){closeCmp();return;}const ie=document.getElementById('cmpImgs'),ne=document.getElementById('cmpNav');if(CM==='single'){const p=photos[CA]||photos[0];ie.innerHTML=`<div class="cmp-single"><img src="${p.src}" alt="${p.label}"><div style="text-align:center;padding:8px 0;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:16px">${p.label} · ${fd(p.date)}</div></div>`;}else{const pA=photos[CA]||photos[0],pB=photos[CB]||photos[0];ie.innerHTML=`<div class="cmp-iw"><img src="${pB.src}" alt="${pB.label}"><div class="cmp-il">⬅ ${pB.label} · ${fd(pB.date)}</div></div><div class="cmp-iw"><img src="${pA.src}" alt="${pA.label}"><div class="cmp-il">${pA.label} · ${fd(pA.date)} ➡</div></div>`;}ne.innerHTML=photos.map((p,i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="ct ${i===CA?'on':''}" onclick="CA=${i};renderCmp()"><img src="${p.src}" alt="${p.label}"></div>${CM==='compare'?`<button class="cpick ${i===CB?'on':''}" onclick="CB=${i};renderCmp()">B</button>`:''}</div>`).join('');}
+
+// ══ PWA ══
+let dp;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('instBanner').style.display='flex';});
+document.getElementById('instBtn').addEventListener('click',async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;document.getElementById('instBanner').style.display='none';});
+window.addEventListener('appinstalled',()=>{document.getElementById('instBanner').style.display='none';});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(r=>console.log('SW:',r.scope)).catch(e=>console.log('SW err:',e));}
+
+// ══ INIT ══
+document.getElementById('hdrDate').textContent=`${DAYS[TI]}, ${MONTHS[now.getMonth()]} ${now.getDate()}`;
+document.querySelector(`.dbtn[data-d="${TI}"]`).classList.add('today');
+rp(AP);
+loadJ().then(()=>{rStats();rJournal();rPhotos();});
+</script>
+</body>
+</html>
